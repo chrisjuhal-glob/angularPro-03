@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import LabelsSelector from '@modules/components/labels-selector/labels-selector';
 import { IssuesListPageService } from '@modules/services/issues-list-page.service';
 import { IssueItem } from '@modules/components/issueItem/issueItem';
+import { State } from '../../interfaces/github-issues.interface';
 
 @Component({
   selector: 'issue-list',
@@ -13,9 +14,27 @@ import { IssueItem } from '@modules/components/issueItem/issueItem';
     <section class="grid grid-cols-5 sm:grid-cols-3 gap-2">
       <div class="col-span-3 flex flex-col">
         <div class="flex gap-2">
-          <button class="btn active">All</button>
-          <button class="btn">Open</button>
-          <button class="btn">Closed</button>
+          <button
+            (click)="onChangeState('all')"
+            [class.active]="issuesService.selectedState() === 'all'"
+            class="btn"
+          >
+            All
+          </button>
+          <button
+            (click)="onChangeState('open')"
+            [class.active]="issuesService.selectedState() === 'open'"
+            class="btn"
+          >
+            Open
+          </button>
+          <button
+            (click)="onChangeState('closed')"
+            [class.active]="issuesService.selectedState() === 'closed'"
+            class="btn"
+          >
+            Closed
+          </button>
         </div>
       </div>
 
@@ -57,5 +76,16 @@ export default class IssueList {
 
   get issuesQuery() {
     return this.issuesService.issuesQuery;
+  }
+
+  onChangeState(newState: string) {
+    const _state =
+      {
+        all: State.All,
+        open: State.Open,
+        closed: State.Closed,
+      }[newState] ?? State.All;
+
+    this.issuesService.setIssuesByState(_state);
   }
 }
